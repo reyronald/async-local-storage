@@ -1,6 +1,6 @@
 # @reyronald/async-local-storage
 
-Allows you to share data across a chain of asynchronous or synchronous function calls.
+Allows you to share data across a chain of asynchronous or synchronous function calls without having to prop drill it through function arguments.
 
 Most often used with `express` or any HTTP Server to store things like user state, claims from a JWT, correlation IDs, etc.
 
@@ -48,3 +48,9 @@ app
     return res.send(ctx.correlationId);
   });
 ```
+
+### TODO
+
+- [ ] Setup prettier commit hooks
+- [ ] Autogenerate definition files .d.ts
+- [ ] eslint

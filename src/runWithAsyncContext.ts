@@ -62,7 +62,7 @@ export const runWithAsyncContext = <R>(next: () => R, initialStore: Store) => {
   const store: StoreMap = new Map();
   const result = asyncLocalStorage.run(store, () => {
     for (const [_key, value] of Object.entries(initialStore)) {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- 3.
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- .
       const key = _key as Key;
       set(key, value);
     }
