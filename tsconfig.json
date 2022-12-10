@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
-        "esModuleInterop": true,        
-        "target": "ESNext"
+        "esModuleInterop": true,    
+        "moduleResolution": "node",    
+        "target": "ESNext",
+        "outDir": "dist"
     }
 }

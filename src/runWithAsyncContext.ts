@@ -1,13 +1,11 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 
-export type ValueOf<T> = T extends ReadonlyArray<infer R> ? R : T[keyof T];
-
 type Store = {
   correlationId: string;
 };
 
 type Key = keyof Store;
-type Values = ValueOf<Store>;
+type Values = Store[Key];
 
 type StoreMap = Map<Key, Values>;
 
@@ -28,7 +26,7 @@ function set<TKey extends Key>(key: TKey, value: Store[TKey]) {
   throw new Error(
     `AsyncLocalStorage store undefined when setting a new value.\n\n` +
       `This usually hapens when you don't initialize the context before trying to set a value.\n` +
-      `Make sure you use \`middleware\` with express or \`runWithAsyncContext\` elsewhere.\n\n` +
+      `Make sure you are using \`runWithAsyncContext\` to wrap your entry point.\n\n` +
       `Key: \t'${key}'\nValue: \t'${serializedValue}'\n`
   );
 }
