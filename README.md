@@ -9,44 +9,50 @@ Better alternative to https://npm.im/continuation-local-storage, https://npm.im/
 Usage:
 
 ```ts
-// Wrap the function that needs to have access to the context
+type Store = { correlationId: string }
+
+const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
+  "correlationId-context",
+  { correlationId: "default-correlationId" },
+)
+
+// Wrap the start of the function chain that needs to have access to the context
 runWithAsyncContext(
-  () => {
-    foo();
-  },
   // Provide an initial store
-  {
-    correlationId: ":correlationId",
-  }
-);
+  { correlationId: ":correlationId" },
+  // Start of the chain
+  () => {
+    foo()
+  },
+)
 
 // ...
 
 // Now every function call in this chain will
 // have access to `ctx` and its contents
 function foo() {
-  bar();
+  bar()
 }
 function bar() {
-  baz();
+  baz()
 }
 function baz() {
-  fn(ctx.correlationId);
+  fn(ctx.correlationId) // ":correlationId"
 }
 ```
 
 Example with `express`:
 
 ```ts
-const app = express();
+const app = express()
 
 app
   .use((req, _res, next) => {
-    runWithAsyncContext(() => next(), { correlationId: ":correlationId" });
+    runWithAsyncContext({ correlationId: ":correlationId" }, () => next())
   })
   .get("/api/async-context-test", (_req, res) => {
-    return res.send(ctx.correlationId);
-  });
+    return res.send(ctx.correlationId)
+  })
 ```
 
 ### TODO
