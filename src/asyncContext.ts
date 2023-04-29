@@ -3,6 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks"
 export const getAsyncContext = <Store extends Record<string, unknown>>(
   name: string,
   defaults: Readonly<Store>,
+  options: { onError: (error: Error) => void },
 ) => {
   type Key = keyof Store
   type Values = Store[Key]
@@ -35,20 +36,15 @@ export const getAsyncContext = <Store extends Record<string, unknown>>(
       return value as Store[TKey]
     }
 
-    if (process.env.NODE_ENV !== "test") {
-      if (!store) {
-        const error = new Error(
-          `AsyncLocalStorage "${name}" store undefined when getting a value.\n\n` +
-            `This usually hapens when you don't initialize the context before trying to get a value.\n` +
-            `Make sure you are using \`runWithAsyncContext\` to wrap your entry point.\n\n` +
-            `Key: \t'${String(key)}'\n`,
-        )
+    if (!store) {
+      const error = new Error(
+        `AsyncLocalStorage "${name}" store undefined when getting a value.\n\n` +
+          `This usually hapens when you don't initialize the context before trying to get a value.\n` +
+          `Make sure you are using \`runWithAsyncContext\` to wrap your entry point.\n\n` +
+          `Key: \t'${String(key)}'\n`,
+      )
 
-        // Log it but don't throw the error so that we don't crash the current request.
-        // It's ok because we're falling back to a default value below.
-        // We log it anyway so that we can be alerted if this hapepns and fix it.
-        console.error(error)
-      }
+      options.onError(error)
     }
 
     return defaults[key]

@@ -21,6 +21,7 @@ describe("asyncContext", () => {
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId },
+      { onError: jest.fn() },
     )
 
     app
@@ -44,9 +45,11 @@ describe("asyncContext", () => {
 
   it("should error when trying to set value in an uninitialized context", () => {
     const correlationId = ":correlationId"
-    const { ctx } = getAsyncContext<Store>("correlationId-context", {
-      correlationId,
-    })
+    const { ctx } = getAsyncContext<Store>(
+      "correlationId-context",
+      { correlationId },
+      { onError: jest.fn() },
+    )
 
     expect(() => {
       ctx.correlationId = ":correlationId"
@@ -70,6 +73,7 @@ Value: 	'":correlationId"'
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId },
+      { onError: jest.fn() },
     )
 
     function foo() {
@@ -98,6 +102,7 @@ Value: 	'":correlationId"'
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId },
+      { onError: jest.fn() },
     )
 
     function foo() {
@@ -126,6 +131,7 @@ Value: 	'":correlationId"'
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId },
+      { onError: jest.fn() },
     )
 
     async function foo() {
@@ -152,6 +158,7 @@ Value: 	'":correlationId"'
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId },
+      { onError: jest.fn() },
     )
 
     async function foo() {
@@ -185,6 +192,7 @@ Value: 	'":correlationId"'
     const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
       "correlationId-context",
       { correlationId: "default-correlation-id" },
+      { onError: jest.fn() },
     )
 
     function foo(cb: (c: string) => void) {
@@ -207,5 +215,40 @@ Value: 	'":correlationId"'
 
     expect(fn1).toHaveBeenCalledWith(correlationId1)
     expect(fn2).toHaveBeenCalledWith(correlationId2)
+  })
+
+  it("should call onError when trying to access store without initializing it", () => {
+    const fn = jest.fn()
+
+    const correlationId = ":correlationId"
+
+    const onError = jest.fn()
+
+    const { ctx } = getAsyncContext<Store>(
+      "correlationId-context",
+      { correlationId },
+      { onError },
+    )
+
+    expect(onError).not.toHaveBeenCalled()
+
+    // Try to access context store without initializing it (i.e. using `runWithAsyncContext`).
+    // Should call `onError`
+    ctx.correlationId
+
+    expect(onError).toHaveBeenCalled()
+    expect(onError.mock.calls).toMatchInlineSnapshot(`
+[
+  [
+    [Error: AsyncLocalStorage "correlationId-context" store undefined when getting a value.
+
+This usually hapens when you don't initialize the context before trying to get a value.
+Make sure you are using \`runWithAsyncContext\` to wrap your entry point.
+
+Key: 	'correlationId'
+],
+  ],
+]
+`)
   })
 })
