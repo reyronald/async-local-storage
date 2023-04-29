@@ -2,9 +2,11 @@
   "name": "@reyronald/async-local-storage",
   "version": "0.0.1",
   "description": "Utility wrappers around node:async_hooks",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [],
+  "main": "dist/asyncContext.js",
+  "types": "dist/asyncContext.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest"
@@ -37,5 +39,8 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
+  },
+  "engines": {
+    "node": ">=16.20.0"
   }
 }

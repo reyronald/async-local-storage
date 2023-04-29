@@ -1,5 +1,24 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 
+/**
+ * Allows you to share data across a chain of asynchronous or synchronous
+ * function calls without having to prop drill it through function arguments.
+ *
+ * Most often used with `express` or any HTTP Server to store values like user
+ * state, claims from a JWT, correlation IDs, etc.
+ *
+ * @param name Name of your context. Used in error messages.
+ * @param defaults
+ * Default store with fallback values.
+ * This will only be used if you try to access the context
+ * without initializiting it (i.e. calling `runWithAsyncContext`),
+ * which you shouldn't be doing.
+ * @param options
+ * `onError` will be called when you attempt to access an uninitialized context.
+ * The error will not be thrown an instead passed as an argument to this function.
+ * You can decide to ignore it, log it or throw it.
+ * @returns
+ */
 export const getAsyncContext = <Store extends Record<string, unknown>>(
   name: string,
   defaults: Readonly<Store>,
