@@ -1,6 +1,6 @@
 {
   "name": "@reyronald/async-local-storage",
-  "version": "0.0.1-rc1",
+  "version": "0.0.1-rc1.0",
   "description": "Utility wrappers around node:async_hooks",
   "main": "dist/asyncContext.js",
   "types": "dist/asyncContext.d.ts",
