@@ -2,7 +2,12 @@
     "compilerOptions": {
         "esModuleInterop": true,    
         "moduleResolution": "node",    
-        "target": "ESNext",
-        "outDir": "dist"
-    }
+        "target": "ES2022",
+        "module": "CommonJS",
+        "declaration": true,
+        "strict": true,
+        "outDir": "dist",
+    },
+    "include": ["src"],
+    "exclude": ["**/*.test.ts"]
 }
