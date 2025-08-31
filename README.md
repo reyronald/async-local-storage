@@ -6,14 +6,25 @@ Most often used with `express` or any HTTP Server to store values like user stat
 
 Better alternative to https://npm.im/continuation-local-storage, https://npm.im/cls-hooked and https://npm.im/express-http-context because those use a deprecated experimental and unsafe legacy Node.js API ([https://nodejs.org/api/async_hooks.html](async_hooks)). This one uses [AsyncLocalStorage](https://nodejs.org/api/async_context.html#class-asynclocalstorage) which is already stable and the currently recommended best practice.
 
+```sh
+npm i @reyronald/async-local-storage
+```
+
 Usage:
 
 ```ts
+import { getAsyncContext } from "@reyronald/async-local-storage"
+
 type Store = { correlationId: string }
 
 const { ctx, runWithAsyncContext } = getAsyncContext<Store>(
   "correlationId-context",
   { correlationId: "default-correlationId" },
+  {
+    onError: (error) => {
+      console.error("Error occurred in async context:", error)
+    },
+  },
 )
 
 // Wrap the start of the function chain that needs to have access to the context
