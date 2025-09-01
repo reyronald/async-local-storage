@@ -80,22 +80,40 @@ export const getAsyncContext = <Store extends Record<string, unknown>>(
     },
   })
 
+  function _populateStore(initialStore: Store) {
+    for (const [_key, _value] of Object.entries(initialStore)) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const key = _key as Key
+      const value = _value as Store[Key]
+      set(key, value)
+    }
+  }
+
   const runWithAsyncContext = <R>(initialStore: Store, next: () => R) => {
     const store: StoreMap = new Map()
     const result = asyncLocalStorage.run(store, () => {
-      for (const [_key, _value] of Object.entries(initialStore)) {
-        const key = _key as Key
-        const value = _value as Store[Key]
-        set(key, value)
-      }
+      _populateStore(initialStore)
       const result = next()
       return result
     })
     return result
   }
 
+  const enterWithAsyncContext = (initialStore: Store) => {
+    const store: StoreMap = new Map()
+    asyncLocalStorage.enterWith(store)
+
+    _populateStore(initialStore)
+  }
+
+  const exitFromAsyncContext = (cb: () => unknown) => {
+    return asyncLocalStorage.exit(cb)
+  }
+
   return {
     ctx,
     runWithAsyncContext,
+    enterWithAsyncContext,
+    exitFromAsyncContext,
   }
 }
